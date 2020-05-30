@@ -13,7 +13,9 @@ library(kableExtra)
 ####   Attaching datasets             ####
 ##########################################
 
-data <- readRDS("data/employment_data.rds")
+# data <- readRDS("data/employment_data.rds")
+
+data <- read.csv("data/employment_data1.csv")
 data_g <- readRDS("data/graduates_by_institutions.rds")
 
 
