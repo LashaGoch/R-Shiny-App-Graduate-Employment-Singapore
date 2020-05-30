@@ -1,0 +1,52 @@
+---
+title: <font size="6"> About Project</font> 
+author: 
+output:
+  html_document:
+    theme: flatly
+    highlight: pygments
+    number_sections: false
+    self_contained: true
+    lib_dir: libs
+    fig_caption: true
+    toc: false
+    toc_float: false
+
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE)
+```
+
+
+The project is created by Zimin Luo and Lasha Gochiashvili. Our motivation
+is that the dashboard will help young people of **Singapore** and those seeking study opportunities in Singapore to analyze which degree has better outcome with regards to **employment and income**. 
+
+This project is a course-work in "Advanced R". 
+The instructors are Piotr Wójcik PhD and Piotr Ćwiakowski Mgr, 
+
+## The Graduate Employment Survey (GES)
+
+The **main components** of the analysis are:
+
+* Employment Rate
+* Monthly Gross Income
+
+The Graduate Employment Survey (GES) is jointly conducted by NTU, NUS, SMU, SIT (from 2014), SUTD (from 2015) and SUSS (from 2018) annually to survey the employment conditions of graduates about **six months** after their final examinations. 
+
+Graduates from NTU, NUS, SMU and SUSS are surveyed in Nov. Due to their different academic calendars, graduates from SUTD and SIT are surveyed in Feb and Mar.
+
+The Ministry of Education of Singapore (MOE) publishes the results of key employment indicators of the survey and the **dataset** can be found here: [data.gov.sg](https://data.gov.sg/dataset/graduate-employment-survey-ntu-nus-sit-smu-suss-sutd)
+
+
+## The Code of Project 
+
+The code is written in R using Shiny. The documentation of web application and
+the website that you visited just now is published with R Markdown for better flexibility. 
+
+**Full code** is freely available at: 
+[Github](https://github.com/statwonk/openfda-dashboard)
+
+
+
+

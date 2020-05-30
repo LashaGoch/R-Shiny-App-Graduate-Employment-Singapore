@@ -1,0 +1,189 @@
+---
+title: "Technical Description of Web App"
+author: "<p>Zimin Luo & Lasha Gochiashvili</p>"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+output:
+  html_document:
+    theme: flatly
+    highlight: pygments
+    #css: styles.css
+    number_sections: false
+    fig_caption: true
+    toc: true
+    toc_float: true
+    
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE)
+```
+
+# Content 
+
+1. Brief Introduction
+2. Details About Data
+    + Data Sources
+    + Data Fields
+3. Main Technologies Used
+4. Data Transformation
+    + Main Libraries
+    + Data Wrangling
+5. Shiny Application
+    + Structure of ui
+    + Structure of server
+    + Tables
+    + Graphs
+6. Deployment
+7. References
+
+
+### 1. Brief Introduction
+
+>This dashboard is built in R Shiny and used R Markdown to publish on this website. 
+This is the documentation of web application that describes technical details of how the application was built. How was data cleaned and organized to load for the visualizations of this dashboard.
+
+
+
+##### **How to see information on the website:**
+
+<img src="app.gif" width="500"/>
+
+
+### 2. Details About Data
+
+
+Details about the dataset can be found here: [data.gov.sg](https://data.gov.sg/dataset/graduate-employment-survey-ntu-nus-sit-smu-suss-sutd)
+
+
+### 3. Main Technologies Used
+
+
+
+### 4. Data Transformation
+
+Please refer to DataWrangling.R file for more details.
+
+#### Main Libraries 
+
+First, we import the dataset. We are using `DT` package to display an interactive table that fits into the page.
+
+```{r echo=FALSE, results="hide", message=FALSE}
+library(DT)
+library(knitr)
+library(kableExtra)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+#### Data Fields
+
+```{r}
+data <- read.csv('data/employment_data.csv')
+datatable(data, rownames = FALSE, filter="top", class = "table", options = list(pageLength = 5, scrollX=T) )
+```
+
+Check the dimension of the dataframe.
+
+```{r}
+dim(data)
+```
+
+First step we convert the following variables from `factor` into `numeric`:
+
+- employment_rate_overall
+- employment_rate_ft_perm
+- basic_monthly_mean
+- basic_monthly_median
+- gross_monthly_mean
+- gross_monthly_median
+- gross_mthly_25_percentile
+- gross_mthly_75_percentile
+
+#### Data Wrangling
+
+```{r warning = FALSE}
+data[,5:12] <- apply(data[,5:12], 2, function(x) as.numeric(as.character(x)))
+str(data)
+```
+
+Check how many missing values in each column. 
+
+```{r}
+colSums(sapply(data, is.na)) %>% 
+  kable()
+```
+
+Removing the rows that contain missing values, and check the dimension again.
+
+```{r message=FALSE}
+data <- drop_na(data)
+dim(data)
+```
+
+Let's take a look at how many records we have for each university.
+
+```{r}
+table(data$university) %>% 
+  kable(.,col.names = c('university', 'count'))
+```
+
+Let's compare the median monthly income between universities. From the graph we can see that on average, Singapore  University of Technology and Design(SUTD) graduates have a better salary (however we have only 9 records so this is likely to be biased), then comes Singapore Management University. The top universities, National University of Singapore and Nanyang Technological University graduates are at 3rd and 4th places, respectively, among 6 universities,  
+
+
+```{r}
+p <- ggplot(data, aes(x=university, y=basic_monthly_median)) + 
+      geom_boxplot(fill="steelblue", alpha=0.5) + 
+      xlab("University") + ylab("Basic Montly Median of Graduates")
+
+p + coord_flip()
+
+```
+
+Let's dive deeper into the details of Nanyang Technological University and list the basic monthly median income for each school. And we can see from the plot that graduates from College of Arts barely get over 3k monthly income. This is consistant with our experiences that usually students from arts or social sciences schools get less pay than their colleagues with engineering or business background.
+
+```{r}
+monthlyNTU <- data %>% 
+                filter(university=="Nanyang Technological University") %>% 
+                group_by(school) %>% 
+                summarise_at(.vars = names(.)[7:8],.funs = c(mean="mean"))
+
+p <- ggplot(data.frame(monthlyNTU), aes(x=reorder(school,basic_monthly_median_mean), 
+                                        y=basic_monthly_median_mean)) + 
+          geom_bar(stat="identity", fill="steelblue", alpha=0.5) +
+          xlab("Schools") + ylab("Basic Montly Median of Graduates from NTU")
+p + coord_flip() 
+
+```
+
+The following graph shows the density of the employment rate for each university. 
+
+```{r}
+ggplot(data, aes(x=employment_rate_ft_perm)) + geom_density(aes(colour = university)) + 
+  xlab("Employment rate for Permenant Positions")
+```
+
+### 5. Shiny Application
+
+#### Structure of ui
+
+Please refer to ui.R file for more details.
+Description of layout.
+
+#### Structure of server
+
+Please refer to server.R file for more details.
+
+
+#### Tables
+
+#### Graphs
+
+### 6. Deployment
+
+Here we will describe a few steps how we launched on webserver. 
+
+
+### 7. References
+
