@@ -8,7 +8,8 @@ library(tidyr)
 library(DT)
 library(knitr)
 library(kableExtra)
-
+library(ggthemes)
+library(plotly)
 ##########################################
 ####   Attaching datasets             ####
 ##########################################
@@ -68,19 +69,28 @@ server <- function(session, input, output) {
   
   colnames(pieDt) <- c("university", "count")
   
-  cols <- c("#00718E","greenyellow","#00FF00", "#00C639","#00AA55", 
-              "midnightblue", "#0055AA", "#001CE3","blue4","blue",
-              "#00FF66", "#00C222","#00AA88", 
-              "yellow", "red", "purple","brown")
+  # cols <- c("#00718E","greenyellow","#00FF00", "#00C639","#00AA55", 
+  #             "midnightblue", "#0055AA", "#001CE3","blue4","blue",
+  #             "#00FF66", "#00C222","#00AA88", 
+  #             "yellow", "red", "purple","brown")
+  
+  # colmap <- c("#2c3e50", "#e67e22", "#f1c40f", "#e74c3c", "#F97F51", 
+  #             "#27ae60", "#2980b9", "#8e44ad", "#8e44ad", "#95a5a6",
+  #             "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#D6A2E8",
+  #             "#25CCF7", "#16a085")
+  
+  colmap <- c("#f94144", "#f3722c", "#f8961e", "#f9c74f", "#90be6d", "#43aa8b", "#577590", 
+              "#ffadad", "#ffd6a5", "#fdffb6", "#caffbf", "#9bf6ff", "#a0c4ff", "#bdb2ff",
+              "#e5e5e5", "#ffffff", "#f07167")
     
     
     ggplot(pieDt, aes(x="", y=count, fill=university)) +
-      geom_bar(stat="identity", width=1, color="white") +
+      geom_bar(stat="identity", width=10, color="white") +
       theme_void() +
       theme(legend.position="right",
             plot.title = element_text(hjust = 0.5, size = 14)) +
       coord_polar("y", start=0) +
-      scale_fill_manual(values=cols) +
+      scale_color_manual(values=colmap) +
       labs(title = "Universities by number of graduates")
     
   })
@@ -145,9 +155,14 @@ server <- function(session, input, output) {
   
   output$densityPlot <- renderPlot({
     
+    colmap <- c("#2c3e50", "#e67e22", "#f1c40f", "#e74c3c", "#F97F51",
+                "#27ae60")
+    
     ggplot(data=dent(), aes_string(x=input$selectvar)) + 
-      geom_density(aes(colour = university, fill=university), alpha=0.5) +
-      theme(legend.position="bottom") + labs(x = input$selectvar)
+      geom_density(aes(fill=university), size=1) +
+      theme(legend.position="bottom") + labs(x = input$selectvar) +
+      scale_fill_manual(values=colmap) +
+      theme_hc()
     
     
   })
@@ -168,11 +183,20 @@ server <- function(session, input, output) {
     
     # render bar plot
     
-    p <- ggplot(data.frame(monthly), aes(x=reorder(school,basic_monthly_median_mean), 
-                                         y=basic_monthly_median_mean)) + 
-      geom_bar(stat="identity", fill="steelblue", alpha=0.7) +
-      xlab("Schools") + ylab(input$radio)
-    p + coord_flip() 
+    colmap <- c("#2c3e50", "#e67e22", "#f1c40f", "#e74c3c", "#F97F51",
+                "#27ae60", "#2980b9", "#8e44ad", "#8e44ad", "#95a5a6",
+                "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#D6A2E8",
+                "#25CCF7", "#16a085")
+    
+    p <- monthly %>% 
+      data.frame() %>% 
+      ggplot(., aes(x=reorder(school,basic_monthly_median_mean), 
+                    y=basic_monthly_median_mean, fill=school)) + 
+      geom_bar(stat="identity", width = 0.5) +
+      scale_fill_manual(values=colmap) + theme_hc() 
+      # xlab("Schools") + ylab(input$radio)
+    p + coord_flip()
+    
     
   })
 
@@ -190,20 +214,28 @@ server <- function(session, input, output) {
   
   output$boxPlot <- renderPlot({
     
+    colmap <- c("#2c3e50", "#e67e22", "#f1c40f", "#e74c3c", "#F97F51",
+                "#27ae60")
+    
     if (input$checkOutlier != TRUE){
-      p <- ggplot(data=uniMedian(), 
-                  aes(x=university, y=basic_monthly_median)) +
-        geom_boxplot(fill="steelblue", alpha=0.5, outlier.shape = NA) +
-        xlab("University") + ylab("Basic Monthly Median of Graduates")
+      ggplot(data=uniMedian(), aes(x=university, y=basic_monthly_median, fill=university)) +
+
+        geom_boxplot(color="black",size=1, width=0.3, outlier.shape = NA) +
+        scale_fill_manual(values=colmap) +
+        
+        # xlab("University") + ylab("Basic Monthly Median of Graduates") +
+        theme_hc() 
+
       
-      p + coord_flip()
     } else {
-      p <- ggplot(data=uniMedian(), 
-                  aes(x=university, y=basic_monthly_median)) +
-        geom_boxplot(fill="steelblue", alpha=0.5) +
-        xlab("University") + ylab("Basic Monthly Median of Graduates")
+      ggplot(data=uniMedian(), aes(x=university, y=basic_monthly_median, fill=university)) +
+        geom_boxplot(color="black",size=1, width=0.3) +
+        scale_fill_manual(values=colmap) +
+        
+        # xlab("University") + ylab("Basic Monthly Median of Graduates") +
+        theme_hc() 
       
-      p + coord_flip()
+
     }
 })
   
@@ -270,9 +302,19 @@ server <- function(session, input, output) {
     input$detailFilter
     
     isolate({
-      ggplot(detailTB(), aes(x=year)) +
-        geom_line(aes(y=basic_monthly_median), size=1, color="#69b3a2") +
-        geom_point(aes(y=basic_monthly_median), size=3, shape=17)
+      ggplot(detailTB(), aes(x=year, y=basic_monthly_median)) +
+        geom_smooth(mapping = aes(linetype = "r2"),
+                    method = "lm",
+                    formula = y ~ x + log(x), se = FALSE,
+                    color = "#bdd5ea",
+                    linetype = "dashed",
+                    size = 2,
+                    alpha = 0.5) +
+        geom_line(aes(y=basic_monthly_median), size=2, color="#2c3e50") +
+        geom_point(aes(x=year, y=basic_monthly_median), size=7, shape=21, 
+                   colour="white", fill="#fca311", stroke=5) +
+        
+        theme_hc(base_size = 16, base_family = "sans", bgcolor = "default")
     })
     
   })
