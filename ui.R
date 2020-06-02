@@ -32,8 +32,6 @@ ui <- navbarPage("GraduateEmployment", theme = shinytheme("flatly"),
   tabsetPanel(type = "tabs",
       tabPanel("Summary",
         sidebarLayout(
-               
-               
          sidebarPanel(
            selectInput("checkYear", "Select Year", 
                        choices = list("2018", "2017", "2016", 
@@ -85,14 +83,8 @@ ui <- navbarPage("GraduateEmployment", theme = shinytheme("flatly"),
       dataTableOutput("myTable"),
       tags$br(),
       tags$br(),
-      tags$hr()
-      
-    )
-    
-  )
-
-
-),
+      tags$hr())
+    )),
   
 
 ################################################
