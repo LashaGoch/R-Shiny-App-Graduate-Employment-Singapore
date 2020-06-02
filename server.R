@@ -14,9 +14,10 @@ library(plotly)
 ####   Attaching datasets             ####
 ##########################################
 
-# data <- readRDS("data/employment_data.rds")
 
-data <- read.csv("data/employment_data1.csv")
+#data <- read.csv("data/employment_data.csv")
+
+data <- readRDS("data/employment_data.rds")
 data_g <- readRDS("data/graduates_by_institutions.rds")
 
 
@@ -36,61 +37,48 @@ opts <- list(
 ##########################################
 
 server <- function(session, input, output) {
-
-################################################
-#### Panel: Main>Summary>Tables & Pie Chart ####
-################################################
-
-# ----------------
-# Summary section
-# ----------------
+  
+  ################################################
+  #### Panel: Main>Summary>Tables & Pie Chart ####
+  ################################################
+  
+  # ----------------
+  # Summary section
+  # ----------------
   
   output$datahead <- renderPrint({
     data %>%
-      filter(year%in%input$checkYear) %>%
-      group_by(university) %>%
-      arrange(desc(gross_monthly_median)) %>% 
-      summarise_at(.vars = names(.)[8], list(min, max)) %>%
-      kable("html", col.names = c("University", "Min Median Monthly Income", 
-                                  "Max Median Monthly Income")) %>%
+      filter(year == input$checkYear) %>%
+      group_by(university) %>%  
+      select(university, employment_rate_overall, gross_monthly_median) %>% 
+      summarise_all(funs(mean)) %>% 
+      mutate_if(is.numeric, round, 0) %>% 
+      arrange(desc(employment_rate_overall)) %>%
+      #summarise_at(.vars = names(.)[8], list(min, max)) %>%
+      kable("html", col.names = c("University", "Employment Rate Overall (Avg %)", 
+                                  "Gross Monthly Median Income (Avg)")) %>%
       kable_styling(c("striped","hover"), full_width = T)
     
   })
-
-# ----------------
-# pie plot section
-# ----------------    
-
+  
+  # ----------------
+  # pie plot section
+  # ----------------    
+  
   output$piePlot <- renderPlot({
-    pieDt <- data_g %>% 
-    filter(year==max(input$checkYear)) %>% 
-    group_by(university) %>% 
-    tally(graduates)
-  
-  colnames(pieDt) <- c("university", "count")
-  
-  # cols <- c("#00718E","greenyellow","#00FF00", "#00C639","#00AA55", 
-  #             "midnightblue", "#0055AA", "#001CE3","blue4","blue",
-  #             "#00FF66", "#00C222","#00AA88", 
-  #             "yellow", "red", "purple","brown")
-  
-  # colmap <- c("#2c3e50", "#e67e22", "#f1c40f", "#e74c3c", "#F97F51", 
-  #             "#27ae60", "#2980b9", "#8e44ad", "#8e44ad", "#95a5a6",
-  #             "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#D6A2E8",
-  #             "#25CCF7", "#16a085")
-  
-  colmap <- c("#f94144", "#f3722c", "#f8961e", "#f9c74f", "#90be6d", "#43aa8b", "#577590", 
-              "#ffadad", "#ffd6a5", "#fdffb6", "#caffbf", "#9bf6ff", "#a0c4ff", "#bdb2ff",
-              "#e5e5e5", "#ffffff", "#f07167")
-    
-    
-    ggplot(pieDt, aes(x="", y=count, fill=university)) +
+    data_g %>% 
+      filter(year == input$checkYear) %>% 
+      group_by(university) %>% 
+      tally(graduates) %>% 
+      ggplot(aes(x="", y=n, fill=university)) +
       geom_bar(stat="identity", width=10, color="white") +
       theme_void() +
       theme(legend.position="right",
             plot.title = element_text(hjust = 0.5, size = 14)) +
       coord_polar("y", start=0) +
-      scale_color_manual(values=colmap) +
+      scale_color_manual(values=c("#f94144", "#f3722c", "#f8961e", "#f9c74f", "#90be6d", "#43aa8b", "#577590", 
+                                  "#ffadad", "#ffd6a5", "#fdffb6", "#caffbf", "#9bf6ff", "#a0c4ff", "#bdb2ff",
+                                  "#e5e5e5", "#ffffff", "#f07167")) +
       labs(title = "Universities by number of graduates")
     
   })
@@ -104,7 +92,7 @@ server <- function(session, input, output) {
   yearGroup <- reactive({
     input$actionDT
     isolate(
-      return(data[data$year%in%input$checkYear, ])
+      return(data[data$year%in%input$checkYearGroup, ])
     )
   })
   
@@ -135,13 +123,13 @@ server <- function(session, input, output) {
   })
   
   
-################################################
-#### Panel: Main>Plots                      ####
-################################################
+  ################################################
+  #### Panel: Main>Plots                      ####
+  ################################################
   
-# --------------------
-# density plot section
-# --------------------
+  # --------------------
+  # density plot section
+  # --------------------
   
   # filter the checkgroup input:
   
@@ -168,9 +156,9 @@ server <- function(session, input, output) {
   })
   
   
-# ----------------
-# bar plot section
-# ----------------
+  # ----------------
+  # bar plot section
+  # ----------------
   
   # filter the input and group data:
   
@@ -194,15 +182,15 @@ server <- function(session, input, output) {
                     y=basic_monthly_median_mean, fill=school)) + 
       geom_bar(stat="identity", width = 0.5) +
       scale_fill_manual(values=colmap) + theme_hc() 
-      # xlab("Schools") + ylab(input$radio)
+    # xlab("Schools") + ylab(input$radio)
     p + coord_flip()
     
     
   })
-
-# ----------------
-# box plot section
-# ----------------
+  
+  # ----------------
+  # box plot section
+  # ----------------
   
   # filter the checkgroup input:
   
@@ -219,13 +207,13 @@ server <- function(session, input, output) {
     
     if (input$checkOutlier != TRUE){
       ggplot(data=uniMedian(), aes(x=university, y=basic_monthly_median, fill=university)) +
-
+        
         geom_boxplot(color="black",size=1, width=0.3, outlier.shape = NA) +
         scale_fill_manual(values=colmap) +
         
         # xlab("University") + ylab("Basic Monthly Median of Graduates") +
         theme_hc() 
-
+      
       
     } else {
       ggplot(data=uniMedian(), aes(x=university, y=basic_monthly_median, fill=university)) +
@@ -235,14 +223,14 @@ server <- function(session, input, output) {
         # xlab("University") + ylab("Basic Monthly Median of Graduates") +
         theme_hc() 
       
-
+      
     }
-})
+  })
   
   
-# ----------------
-# scatter plot section
-# ----------------
+  # ----------------
+  # scatter plot section
+  # ----------------
   
   output$scatPlot <- renderPlot({
     
@@ -257,19 +245,19 @@ server <- function(session, input, output) {
   })
   
   
-################################################
-#### Panel: Main>Details                    ####
-################################################
+  ################################################
+  #### Panel: Main>Details                    ####
+  ################################################
   
   
   observeEvent(
     input$detailUniversity,
-    updateSelectInput(session, "detailSchool", "Choose a School",
+    updateSelectInput(session, "detailSchool", "Select School",
                       choices = unique(data$school[data$university==input$detailUniversity]))
   )
   observeEvent(
     input$detailSchool,
-    updateSelectInput(session, "detailMajor", "Choose a Program",
+    updateSelectInput(session, "detailMajor", "Select Program",
                       choices = unique(data$degree[data$school==input$detailSchool & 
                                                      data$university==input$detailUniversity]))
   )
@@ -319,20 +307,20 @@ server <- function(session, input, output) {
     
   })
   
-################################################
-#### Panel: Documentation                   ####
-################################################
-
+  ################################################
+  #### Panel: Documentation                   ####
+  ################################################
+  
   getPageDoc<-function() {
     return(includeHTML("gesrmarkdown.html"))
   }
   output$doc<-renderUI({getPageDoc()})
   
   
-################################################
-#### Panel: About                           ####
-################################################
-
+  ################################################
+  #### Panel: About                           ####
+  ################################################
+  
   getPageAbo<-function() {
     return(includeHTML("about.html"))
   }
@@ -340,6 +328,3 @@ server <- function(session, input, output) {
   
   
 }
-
-
-
