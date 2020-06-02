@@ -6,9 +6,6 @@ library(DT)
 library(rsconnect)
 library(shinythemes)
 
-# setwd("/Users/z/Documents/Dropbox/+ UWDS/2 Sem/Advanced Programming in R/Project - share folder/github/R-Shiny-App-Graduate-Employment-Singapore/")
-# setwd("D:/Dropbox/+ UWDS/2 Sem/Advanced Programming in R/Project - share folder/github/R-Shiny-App-Graduate-Employment-Singapore/")
-
 ##########################################
 ####   Shiny ui                       ####
 ##########################################
@@ -20,10 +17,12 @@ library(shinythemes)
 ui <- navbarPage("GraduateEmployment", theme = shinytheme("flatly"),
   tabPanel("Main",
   # App title ----
-  titlePanel(div(column(width = 8, h1("Graduate Employment in Singapore", align="left")), 
-                  column(width = 4, tags$img(src = "wnelogo.png", width = "100%")),
+  titlePanel(div(column(width = 6, h1("Graduate Employment in Singapore", align="left")), 
+                  column(width = 6, tags$img(src = "sg0.jpg", width = "100%")),
               windowTitle="GraduatEmploymentSG")),
-  br(),
+  tags$br(),
+  tags$br(),
+  tags$br(),
   
 
 ##########################################
@@ -31,26 +30,15 @@ ui <- navbarPage("GraduateEmployment", theme = shinytheme("flatly"),
 ##########################################  
 
   tabsetPanel(type = "tabs",
-      tabPanel("Summary", 
+      tabPanel("Summary",
+        sidebarLayout(
+               
+               
          sidebarPanel(
-
-# ------------------
-# Data overview filters
-# ------------------
-      
-      h3("Data Overview"),
-      tags$br(),
-      sliderInput("incomeRange", label = "Salary Range", min=1600, max=5000, value=c(1600,5000)),
-      sliderInput("employRange", label = "Employment Rate Range", min=0, max=100, value=c(0, 100)),
-      selectInput("checkYear", "Select Year", choices = data$year, selected = "2018",
-                  multiple = TRUE),
-      
-      #checkboxGroupInput("checkYear", label = "Select Year", 
-       #                  choices = list("2013", "2014", "2015", "2016", "2017", "2018"),
-        #                 selected = list("2013", "2014", "2015", "2016", "2017", "2018"), inline = TRUE),
-      
-      actionButton("actionDT", "Filter"),
-      tags$hr()),
+           selectInput("checkYear", "Select Year", 
+                       choices = list("2018", "2017", "2016", 
+                                      "2015", "2014", "2013"), 
+                       selected = "2018")),
       
     mainPanel(
       
@@ -58,8 +46,8 @@ ui <- navbarPage("GraduateEmployment", theme = shinytheme("flatly"),
 #### Panel: Main>Summary>Tables & Pie Chart ####
 ################################################
       tabsetPanel(type = "tabs",
-                  tabPanel("Tables", tableOutput("datahead")),
-                  tabPanel("Pie Chart", plotOutput(outputId = "piePlot"))),
+                  tabPanel("Ranking", tableOutput("datahead")),
+                  tabPanel("No. of Graduates", plotOutput(outputId = "piePlot"))),
       tags$br(),
       tags$br(),
       tags$hr(),
@@ -68,11 +56,42 @@ ui <- navbarPage("GraduateEmployment", theme = shinytheme("flatly"),
 # data table section
 # ------------------
 
+      )
+),
+
+  sidebarLayout(
+    sidebarPanel(
+      # ------------------
+      # Data overview filters
+      # ------------------
+      
+      h3("Data Overview"),
+      tags$br(),
+      sliderInput("incomeRange", label = "Salary Range", min=1600, max=5000, value=c(1600,5000)),
+      sliderInput("employRange", label = "Employment Rate Range", min=0, max=100, value=c(0, 100)),
+      selectInput("checkYearGroup", "Select Year", choices = data$year, selected = "2018",
+                  multiple = TRUE),
+      
+      #checkboxGroupInput("checkYear", label = "Select Year", 
+      #                  choices = list("2013", "2014", "2015", "2016", "2017", "2018"),
+      #                 selected = list("2013", "2014", "2015", "2016", "2017", "2018"), inline = TRUE),
+      
+      actionButton("actionDT", "Filter"),
+      tags$hr()
+      
+    ),
+    mainPanel(
       h3("Data Table"),
       dataTableOutput("myTable"),
       tags$br(),
       tags$br(),
-      tags$hr(),)
+      tags$hr()
+      
+    )
+    
+  )
+
+
 ),
   
 
@@ -80,7 +99,7 @@ ui <- navbarPage("GraduateEmployment", theme = shinytheme("flatly"),
 #### Panel: Main>Plots                      ####
 ################################################
 
-tabPanel("Plots",
+tabPanel("Visual Comparison",
          
 # --------------------
 # density plot section
@@ -177,7 +196,7 @@ tabPanel("Plots",
 #### Panel: Main>Details                    ####
 ################################################
 
-tabPanel("Details", 
+tabPanel("Details By University", 
          h3("Graduates' Income and Employment Rate by Year"),
          br(),
          fluidRow(
@@ -185,8 +204,7 @@ tabPanel("Details",
                   selectInput("detailUniversity",
                     label = "Select University",
                     choices = unique(data$university),
-                    selected = "National University of Singapore"
-                  ),),
+                    selected = "National University of Singapore"),),
            column(4, selectInput("detailSchool", "Select School",
                               choices ="", selected = "")),
            column(4, selectInput("detailMajor", "Select Program",
@@ -196,8 +214,10 @@ tabPanel("Details",
          
          fluidRow(
            column(4, tableOutput("detailTable")),
-           column(8, plotOutput(outputId="detailPlot", height = "300px"))
-           )))),
+           column(8, plotOutput(outputId="detailPlot", height = "300px"))),
+         tags$br(),
+         tags$br(),
+         tags$hr()))),
 
 ################################################
 #### Panel: Documentation                   ####
