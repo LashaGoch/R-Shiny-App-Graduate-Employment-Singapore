@@ -294,45 +294,26 @@ server <- function(session, input, output) {
   # box plot section
   # ----------------
   
+  
+  
+  
   # filter the checkgroup input:
   
   uniMedian <-  reactive({
-    return(data[data$university %in% input$checkGroupbox, ])
+    return(data[data$university%in%input$checkGroupbox, ])
   })
   
   # render box plot
   
   output$boxPlot <- renderPlotly({
+    
     colmap <- c("#2c3e50",
                 "#e67e22",
                 "#f1c40f",
                 "#e74c3c",
                 "#F97F51",
                 "#27ae60")
-    
-    if (input$checkOutlier != TRUE) {
-      p <-
-        ggplot(data = uniMedian(),
-               aes(x = university, y = basic_monthly_median, fill = university)) +
-        
-        geom_boxplot(
-          color = "black",
-          size = 1,
-          width = 0.3,
-          outlier.shape = NA
-        ) +
-        scale_fill_manual(values = colmap) +
-        theme_hc() +
-        theme(
-          legend.title = element_blank(),
-          axis.title.x = element_blank(),
-          axis.title.y = element_blank()
-        )
-      
-      ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median"))
-      
-      
-    } else {
+  
       p <-
         ggplot(data = uniMedian(),
                aes(x = university, y = basic_monthly_median, fill = university)) +
@@ -348,7 +329,7 @@ server <- function(session, input, output) {
         )
       
       ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median"))
-    }
+  
   })
   
   
@@ -363,7 +344,10 @@ server <- function(session, input, output) {
                 "#e74c3c",
                 "#F97F51",
                 "#27ae60")
-    p <-
+   
+    data <- data %>% filter(year=="2018")
+    
+     p <-
       ggplot(
         data,
         aes(
@@ -488,67 +472,66 @@ server <- function(session, input, output) {
     })
     
   })
-    
-    output$detailPlotem <- renderPlot({
-      input$detailFilter
-      
-      isolate({
-        ggplot(detailTB(), aes(x = year, y = employment_rate_ft_perm)) +
-          geom_smooth(
-            mapping = aes(linetype = "r2"),
-            method = "lm",
-            formula = y ~ x + log(x),
-            se = FALSE,
-            color = "#bdd5ea",
-            linetype = "dashed",
-            size = 2,
-            alpha = 0.5
-          ) +
-          geom_line(aes(y = employment_rate_ft_perm),
-                    size = 2,
-                    color = "#2c3e50") +
-          geom_point(
-            aes(x = year, y = employment_rate_ft_perm),
-            size = 7,
-            shape = 21,
-            colour = "white",
-            fill = "#fca311",
-            stroke = 5
-          ) +
-          
-          theme_hc() +
-          theme(
-            legend.title = element_blank(),
-            axis.title.x = element_blank(),
-            axis.title.y = element_blank()
-          )
-      })
-      
-    })
-    
-    ################################################
-    #### Panel: Documentation                   ####
-    ################################################
-    
-    getPageDoc <- function() {
-      return(includeHTML("gesrmarkdown.html"))
-    }
-    output$doc <- renderUI({
-      getPageDoc()
-    })
-    
-    
-    ################################################
-    #### Panel: About                           ####
-    ################################################
-    
-    getPageAbo <- function() {
-      return(includeHTML("about.html"))
-    }
-    output$abo <- renderUI({
-      getPageAbo()
-    })
-    
-    
-  }
   
+  output$detailPlotem <- renderPlot({
+    input$detailFilter
+    
+    isolate({
+      ggplot(detailTB(), aes(x = year, y = employment_rate_ft_perm)) +
+        geom_smooth(
+          mapping = aes(linetype = "r2"),
+          method = "lm",
+          formula = y ~ x + log(x),
+          se = FALSE,
+          color = "#bdd5ea",
+          linetype = "dashed",
+          size = 2,
+          alpha = 0.5
+        ) +
+        geom_line(aes(y = employment_rate_ft_perm),
+                  size = 2,
+                  color = "#2c3e50") +
+        geom_point(
+          aes(x = year, y = employment_rate_ft_perm),
+          size = 7,
+          shape = 21,
+          colour = "white",
+          fill = "#fca311",
+          stroke = 5
+        ) +
+        
+        theme_hc() +
+        theme(
+          legend.title = element_blank(),
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank()
+        )
+    })
+    
+  })
+  
+  ################################################
+  #### Panel: Documentation                   ####
+  ################################################
+  
+  getPageDoc <- function() {
+    return(includeHTML("gesrmarkdown.html"))
+  }
+  output$doc <- renderUI({
+    getPageDoc()
+  })
+  
+  
+  ################################################
+  #### Panel: About                           ####
+  ################################################
+  
+  getPageAbo <- function() {
+    return(includeHTML("about.html"))
+  }
+  output$abo <- renderUI({
+    getPageAbo()
+  })
+  
+  
+}
