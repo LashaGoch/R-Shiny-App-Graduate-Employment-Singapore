@@ -19,11 +19,16 @@ knitr::opts_chunk$set(warning=FALSE)
 ```
 
 
-The project is created by Zimin Luo and Lasha Gochiashvili. Our motivation
-is that the dashboard will help young people of **Singapore** and those seeking study opportunities in Singapore to analyze which degree has better outcome with regards to **employment and income**. 
+Young people of Singapore have these two questions before they choose the university to study:
 
-This project is a course-work in "Advanced R". 
-The instructors are Piotr Wójcik PhD and Piotr Ćwiakowski Mgr, 
+* Which university has better graduate employment rate? 
+* Which university graduate earns more?
+
+Our motivation is that the dashboard will help young people of **Singapore** and those seeking study opportunities in Singapore to analyze which university & degree has better outcome with regards to **employment and income**. 
+
+This project is a course-work in "Advanced R" created by Zimin Luo and Lasha Gochiashvili. Instructors - Piotr Wójcik PhD and Piotr Ćwiakowski Mgr. 
+
+<img src="www/wnelogo.png" width="500"/>
 
 ## The Graduate Employment Survey (GES)
 
