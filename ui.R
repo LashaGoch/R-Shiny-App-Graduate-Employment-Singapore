@@ -3,6 +3,12 @@
 ##########################################
 library(shinyWidgets)
 library(shiny)
+library(shinyWidgets)
+library(shiny)
+library(plotly)
+library(shinythemes)
+library(DT)
+library(rsconnect)
 # ------------------
 # Main title section
 # ------------------
@@ -15,12 +21,9 @@ ui <- navbarPage(
     # App title ----
     titlePanel(div(
       windowTitle = "GraduatEmploymentSG",
-      img(src = "sg01.jpg", width = "100%", class = "bg"),
-      h1("Graduate Employment in Singapore", align = "center")
+      img(src = "sg0.jpg", width = "100%", class = "bg"),
     )),
     
-    tags$br(),
-    tags$br(),
     tags$br(),
     
     
@@ -209,7 +212,6 @@ ui <- navbarPage(
           sidebarPanel(
             h3("Box Plot Panel"),
             tags$br(),
-            checkboxInput("checkOutlier", label = "Show Outliers", value = TRUE),
             checkboxGroupInput(
               "checkGroupbox",
               label = "Select University",
@@ -250,7 +252,7 @@ ui <- navbarPage(
         
         
         fluidPage(fluidRow(
-          h3("Fulltime Employment Rate vs. Median Income by University and Year"),
+          h3("Fulltime Employment Rate vs. Median Income by University in 2018"),
           align = "center",
           plotlyOutput(outputId = "scatPlot", width = "100%"),
           div(style = "height:400px")
