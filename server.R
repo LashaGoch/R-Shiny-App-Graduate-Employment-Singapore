@@ -11,14 +11,12 @@ library(kableExtra)
 library(ggthemes)
 library(plotly)
 
-library(DT)
 library(rsconnect)
 library(shinythemes)
 
 ##########################################
 ####   Attaching datasets             ####
 ##########################################
-
 
 #data <- read.csv("data/employment_data.csv")
 
@@ -225,7 +223,7 @@ server <- function(session, input, output) {
           axis.title.y = element_blank()
         )
     ) %>% layout(legend = list(orientation = "h",
-                              y = 0, x = 0))
+                               y = 0, x = 0))
     
   })
   
@@ -287,8 +285,8 @@ server <- function(session, input, output) {
         axis.title.y = element_blank()
       )
     
-     p <- ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median_mean"))
-     hide_legend(p)
+    p <- ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median_mean"))
+    hide_legend(p)
     
   })
   
@@ -315,24 +313,24 @@ server <- function(session, input, output) {
                 "#e74c3c",
                 "#F97F51",
                 "#27ae60")
-  
-      p <-
-        ggplot(data = uniMedian(),
-               aes(x = university, y = basic_monthly_median, fill = university)) +
-        geom_boxplot(color = "black",
-                     size = 1,
-                     width = 0.3) +
-        scale_fill_manual(values = colmap) +
-        theme_hc() +
-        theme(
-          legend.title = element_blank(),
-          axis.title.x = element_blank(),
-          axis.title.y = element_blank()
-        )
-      
-      p <- ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median"))
-      hide_legend(p)
-  
+    
+    p <-
+      ggplot(data = uniMedian(),
+             aes(x = university, y = basic_monthly_median, fill = university)) +
+      geom_boxplot(color = "black",
+                   size = 1,
+                   width = 0.3) +
+      scale_fill_manual(values = colmap) +
+      theme_hc() +
+      theme(
+        legend.title = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()
+      )
+    
+    p <- ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median"))
+    hide_legend(p)
+    
   })
   
   
@@ -347,10 +345,10 @@ server <- function(session, input, output) {
                 "#e74c3c",
                 "#F97F51",
                 "#27ae60")
-   
+    
     data <- data %>% filter(year=="2018")
     
-     p <-
+    p <-
       ggplot(
         data,
         aes(
