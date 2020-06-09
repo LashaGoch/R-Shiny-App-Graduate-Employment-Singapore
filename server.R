@@ -215,7 +215,7 @@ server <- function(session, input, output) {
     
     ggplotly(
       ggplot(data = dent(), aes_string(x = input$selectvar)) +
-        geom_density(aes(fill = university), size = 1) +
+        geom_density(aes(fill = university), size = 1, alpha=0.75) +
         theme(legend.position = "bottom") + labs(x = input$selectvar) +
         scale_fill_manual(values = colmap) +
         theme_hc() +
@@ -224,7 +224,8 @@ server <- function(session, input, output) {
           axis.title.x = element_blank(),
           axis.title.y = element_blank()
         )
-    )
+    ) %>% layout(legend = list(orientation = "h",
+                              y = 0, x = 0))
     
   })
   
@@ -286,7 +287,8 @@ server <- function(session, input, output) {
         axis.title.y = element_blank()
       )
     
-    ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median_mean"))
+     p <- ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median_mean"))
+     hide_legend(p)
     
   })
   
@@ -328,7 +330,8 @@ server <- function(session, input, output) {
           axis.title.y = element_blank()
         )
       
-      ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median"))
+      p <- ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median"))
+      hide_legend(p)
   
   })
   
