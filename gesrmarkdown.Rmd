@@ -189,7 +189,7 @@ p <- monthly %>%
       geom_bar(stat = "identity", width = 0.5, color = "black", size = 1) +
       scale_fill_manual(values = colmap) +
       theme_hc() +
-      theme(legend.title = element_blank(), axis.title.x = element_blank(),
+      theme(legend.position = "none", axis.title.x = element_blank(),
         axis.title.y = element_blank())
     
 ggplotly(p + coord_flip(), tooltip = ("basic_monthly_median_mean"))
@@ -322,7 +322,7 @@ Front page of Shiny Application:
 
 
 
-For full codes please refer to ui.R and server.R files for more details.
+For full codes please refer the [GitHub repository](https://github.com/LashaGoch/R-Shiny-App-Graduate-Employment-Singapore). Code for front-end: [ui.R](https://github.com/LashaGoch/R-Shiny-App-Graduate-Employment-Singapore/blob/master/ui.R) and code for back-end: [server.R](https://github.com/LashaGoch/R-Shiny-App-Graduate-Employment-Singapore/blob/master/server.R).
 
 
 ## 6. Deployment
