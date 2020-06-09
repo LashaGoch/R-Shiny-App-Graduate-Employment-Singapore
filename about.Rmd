@@ -50,8 +50,4 @@ The code is written in R using Shiny. The documentation of web application and
 the website that you visited just now is published with R Markdown for better flexibility. 
 
 **Full code** is freely available at: 
-[Github](https://github.com/statwonk/openfda-dashboard)
-
-
-
-
+[Github](https://github.com/LashaGoch/R-Shiny-App-Graduate-Employment-Singapore)
