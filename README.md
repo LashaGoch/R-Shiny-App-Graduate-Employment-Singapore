@@ -2,7 +2,7 @@
 # GRADUATE EMPLOYMENT IN SINGAPORE
 ![sg0.jpg](www/sg0.jpg)
 
-Authors: Zimin and Lashari
+Authors: Zimin and Lasha
 
 - This project has been deployed on [Shinyapps.io](https://gesurvey.shinyapps.io/Graduate-Employment-Survey/)
 - The detailed documentation can be found [here](https://gesurvey.shinyapps.io/Graduate-Employment-Survey/).
